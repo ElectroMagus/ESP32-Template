@@ -1,5 +1,5 @@
 // Standard Libraries
-#include <Arduino.h>
+#include <Arduino.h>          // Needed when using PlatformIO
 #include <WiFi.h>
 #include <WiFiClient.h>
 
@@ -20,7 +20,7 @@ char pass[] = "<PASSWORD>";
 #include <SimpleTimer.h>
 #include <TimeLib.h>                // Nice library to make using the virtual RTC easier to use and format
 #include <WidgetRTC.h>
-#include <WidgetBridge.h>
+#include <WidgetBridge.h>           // Optional, but very handy for device-device communication
 
 WidgetRTC rtc;
 
@@ -38,14 +38,14 @@ void loop1(void *pvParameters) {
 }
 
 
-//  Used for background processes.   Also good for inturrupts (like button presses)
+//  Used for background processes.   Also good for interrupts (like button presses)
 void loop2(void *pvParameters) {
   while (1) {
     if(Blynk.connected()) {
       Blynk.run();
     } else Blynk.connect();
     ArduinoOTA.handle();
-    delay(1);                     // Needed to reset watchdog timer, else it throws error in serial
+    delay(1);                     // Needed to reset watchdog timer, else it throws warning in serial making it hard to see real debug messages.
   }
 }
 
@@ -57,7 +57,7 @@ void setup()
 
   // Blynk Setup
   Blynk.begin(auth, ssid, pass, "<SERVERNAME>", 8080);
-  setSyncInterval(60);                                                  // Sets interval for updating the tiem via the virtual RTC via Blynk
+  setSyncInterval(60);                                                  // Sets interval for updating the time via the virtual RTC via Blynk
 
   // OTA Setup
   ArduinoOTA.setHostname("ESP32-01");                                   // mDNS hostname
@@ -71,5 +71,5 @@ void setup()
 
 void loop()
 {
-            // Leave empty
+            // Leave empty.   Arduino framework requires this loop function else it won't compile.
 }
