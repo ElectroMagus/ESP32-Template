@@ -4,7 +4,7 @@
 #include <WiFiClient.h>
 
 // OTA Update Libraries
-#include <ESPmDNS.h>
+#include <ESPmDNS.h>          // This library isn't availible in PlatformIO's library tool, and has to be manually put into the lib directory. It's contained in the Arduino ESP32 framework.
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
@@ -29,22 +29,22 @@ BLYNK_CONNECTED() {
   Blynk.syncAll();
 }
 
-
-uint32_t timer;
-
+// Used for foreground processes.
 void loop1(void *pvParameters) {
   while (1) {
-    delay(1);
+    delay(1);                       // Needed to reset watchdog timer, else it throws error in serial
   }
 }
 
+
+//  Used for background processes.   Also good for inturrupts (like button presses)
 void loop2(void *pvParameters) {
   while (1) {
     if(Blynk.connected()) {
       Blynk.run();
     } else Blynk.connect();
-    ArduinoOTA.handle();  // For OTA
-    delay(1);
+    ArduinoOTA.handle();
+    delay(1);                     // Needed to reset watchdog timer, else it throws error in serial
   }
 }
 
@@ -70,4 +70,5 @@ void setup()
 
 void loop()
 {
+            // Leave empty
 }
