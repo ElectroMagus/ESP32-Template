@@ -15,10 +15,10 @@ char ssid[] = "<SSID>";
 char pass[] = "<PASSWORD>";
 //#define BLYNK_DEBUG
 #define BLYNK_PRINT Serial
-#define BLYNK_MAX_READBYTES  4096
+#define BLYNK_MAX_READBYTES  4096   // Optional, but makes things more stable when transferring lots of data via Blynk.  You'll have to configure this on your Blynk server as well.
 #include <BlynkSimpleEsp32.h>
 #include <SimpleTimer.h>
-#include <TimeLib.h>
+#include <TimeLib.h>                // Nice library to make using the virtual RTC easier to use and format
 #include <WidgetRTC.h>
 #include <WidgetBridge.h>
 
@@ -33,6 +33,7 @@ BLYNK_CONNECTED() {
 void loop1(void *pvParameters) {
   while (1) {
     delay(1);                       // Needed to reset watchdog timer, else it throws error in serial
+                                    // Put you main code in here.
   }
 }
 
@@ -56,15 +57,15 @@ void setup()
 
   // Blynk Setup
   Blynk.begin(auth, ssid, pass, "<SERVERNAME>", 8080);
-  setSyncInterval(60);
+  setSyncInterval(60);                                                  // Sets interval for updating the tiem via the virtual RTC via Blynk
 
   // OTA Setup
-  ArduinoOTA.setHostname("ESP32-01");  // For OTA - Use your own device identifying name
+  ArduinoOTA.setHostname("ESP32-01");                                   // mDNS hostname
   ArduinoOTA.begin();
 
   // Loop Setup
-  xTaskCreatePinnedToCore(loop1, "loop1", 4096, NULL, 1, NULL, 0);
-  xTaskCreatePinnedToCore(loop2, "loop2", 4096, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(loop1, "loop1", 4096, NULL, 1, NULL, 0);      // Runs on Core 0
+  xTaskCreatePinnedToCore(loop2, "loop2", 4096, NULL, 1, NULL, 1);      // Runs on Core 1
 
 }
 
